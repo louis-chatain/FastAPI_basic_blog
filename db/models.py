@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String
-from db.database import Base
+from sqlalchemy import Column, DateTime, Integer, String
+from .database import Base
 
 
 class DbBlog(Base):
@@ -8,5 +8,5 @@ class DbBlog(Base):
     creator = Column(String)
     title = Column(String)
     content = Column(String)
-    # img_url = Column(String)
-    
+    img_url = Column(String)
+    timestamp = Column(DateTime)    
