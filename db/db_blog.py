@@ -1,16 +1,19 @@
 import datetime
-from fastapi import HTTPException, status
+from fastapi import File, HTTPException, UploadFile, status
 from sqlalchemy.orm.session import Session
 from schemas.schemas_blog import BlogBase
 from db.models import DbBlog
+import shutil
 
-
-def create_blog(request: BlogBase, db: Session):
+def create_blog(creator: str, title: str, content: str, db: Session, img_request: UploadFile = File(Ellipsis)):
+    file_location = f"files/{img_request.filename}"
+    with open(file_location, "w+b") as buffer:
+        shutil.copyfileobj(img_request.file, buffer)
     new_blog = DbBlog(
-        creator=request.creator,
-        title=request.title,
-        content=request.content,
-        img_url=request.img_url,
+        creator=creator,
+        title=title,
+        content=content,
+        img_url=file_location,
         timestamp=datetime.datetime.now(),
     )
     db.add(new_blog)
@@ -47,6 +50,7 @@ def update_blog(id: int, request: BlogBase, db: Session):
         }
     )
     db.commit()
+    blog = db.query(DbBlog).filter_by(id=id).first()
     return blog
 
 

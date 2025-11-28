@@ -1,5 +1,4 @@
 from datetime import datetime
-from fastapi import File, UploadFile
 from pydantic import BaseModel
 
 #-----------------------------------------------------------------------------
@@ -7,8 +6,8 @@ class BlogBase(BaseModel):      # data that we will demand/receive from the user
     creator: str
     title: str
     content: str
-    img_url: str
 
+# upload_file: UploadFile = File(Ellipsis)
 class blogDisplay(BaseModel):   # data that we will send back to the user                                   
     id: int
     creator: str                # sends back only username and email in

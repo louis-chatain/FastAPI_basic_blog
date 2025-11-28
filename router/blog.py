@@ -1,6 +1,6 @@
 from schemas.schemas_blog import BlogBase, blogDisplay
 from sqlalchemy.orm.session import Session
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from db.database import get_db
 from typing import List
 from db import db_blog
@@ -9,8 +9,8 @@ router = APIRouter(prefix="/blog", tags=["blog"])
 
 
 @router.post("/create", response_model=blogDisplay)
-def create_blog(request: BlogBase, db: Session = Depends(get_db)):
-    blog = db_blog.create_blog(request, db)
+def create_blog(creator: str, title: str, content: str, img_request: UploadFile = File(Ellipsis), db: Session = Depends(get_db)):
+    blog = db_blog.create_blog(creator, title, content, db, img_request)
     return blog
 
 
