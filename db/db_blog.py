@@ -1,20 +1,28 @@
-import datetime
 from fastapi import File, HTTPException, UploadFile, status
 from sqlalchemy.orm.session import Session
 from schemas.schemas_blog import BlogBase
 from db.models import DbBlog
+from datetime import datetime
 import shutil
+import os
 
-def create_blog(creator: str, title: str, content: str, db: Session, img_request: UploadFile = File(Ellipsis)):
+def create_blog(
+    creator: str,
+    title: str,
+    content: str,
+    db: Session,
+    img_request: UploadFile = File(Ellipsis),
+):
     file_location = f"files/{img_request.filename}"
     with open(file_location, "w+b") as buffer:
         shutil.copyfileobj(img_request.file, buffer)
+
     new_blog = DbBlog(
         creator=creator,
         title=title,
         content=content,
         img_url=file_location,
-        timestamp=datetime.datetime.now(),
+        timestamp=datetime.now().date(),
     )
     db.add(new_blog)
     db.commit()
@@ -60,6 +68,12 @@ def delete_blog(id: int, db: Session):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"blog id {id} not found."
         )
+    img_location = blog.img_url
+    if os.path.exists(img_location):
+        os.remove(img_location)
+        print(f"File '{img_location}' deleted successfully.")
+    else:
+        print(f"File '{img_location}' not found.")
     db.delete(blog)
     db.commit()
     return blog
