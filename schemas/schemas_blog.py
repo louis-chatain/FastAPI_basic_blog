@@ -1,5 +1,5 @@
-from datetime import datetime
 from pydantic import BaseModel
+from datetime import date
 
 #-----------------------------------------------------------------------------
 class BlogBase(BaseModel):      # data that we will demand/receive from the user
@@ -7,14 +7,14 @@ class BlogBase(BaseModel):      # data that we will demand/receive from the user
     title: str
     content: str
 
-# upload_file: UploadFile = File(Ellipsis)
+
 class blogDisplay(BaseModel):   # data that we will send back to the user                                   
     id: int
     creator: str                # sends back only username and email in
     title: str                  # the response body in the docs
     content: str
     img_url: str
-    timestamp: datetime
+    timestamp: date
     class ConfigDict():
         from_attributes = True
 #-----------------------------------------------------------------------------
